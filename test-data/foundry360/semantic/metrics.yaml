@@ -1,0 +1,208 @@
+domain: sales
+dialect: Oracle 19c
+metrics:
+  - code: wafer_revenue
+    name: 晶圆收入
+    base_table: f360_shipment
+    expression: SUM(s.accepted_wafers * s.unit_price_usd)
+    filter: s.shipment_status = 'DELIVERED'
+    grain: shipment
+    owner: 财务与销售运营
+    note: 不减运费；以客户验收晶圆数确认收入
+  - code: shipped_wafers
+    name: 出货晶圆数
+    base_table: f360_shipment
+    expression: SUM(s.shipped_wafers)
+    filter: s.shipment_status = 'DELIVERED'
+    grain: shipment
+    owner: 供应链
+  - code: accepted_wafers
+    name: 验收晶圆数
+    base_table: f360_shipment
+    expression: SUM(s.accepted_wafers)
+    filter: s.shipment_status = 'DELIVERED'
+    grain: shipment
+    owner: 财务
+  - code: asp
+    name: 晶圆平均售价
+    base_table: f360_shipment
+    expression: SUM(s.accepted_wafers*s.unit_price_usd)/NULLIF(SUM(s.accepted_wafers),0)
+    filter: s.shipment_status = 'DELIVERED'
+    grain: selected dimensions
+    owner: 销售运营
+  - code: booked_amount
+    name: 订单金额
+    base_table: f360_order_line
+    expression: SUM(ol.ordered_wafers*ol.unit_price_usd-ol.discount_amount_usd)
+    filter: so.order_status NOT IN ('CANCELLED')
+    grain: order line
+    owner: 销售运营
+  - code: backlog_wafers
+    name: 未交付积压量
+    base_table: f360_order_line
+    expression: SUM(ol.ordered_wafers)-SUM(NVL(delivered.accepted_wafers,0))
+    rule: shipments must be aggregated by order_line_id before joining
+    owner: 供应链
+  - code: otif_rate
+    name: 按时足量交付率
+    base_table: f360_order_line
+    expression: 100*AVG(CASE WHEN delivered.actual_delivery_date<=ol.promised_date AND delivered.accepted_wafers>=ol.ordered_wafers THEN 1 ELSE 0 END)
+    rule: evaluate once per order_line_id; aggregate shipments first
+    owner: 供应链
+  - code: forecast_accuracy
+    name: 预测准确率
+    base_table: f360_customer_forecast
+    expression: 100*(1-ABS(fc.forecast_wafers-NVL(actual.shipped_wafers,0))/NULLIF(fc.forecast_wafers,0))
+    rule: clamp negative values to zero; compare same customer, product and calendar month
+    owner: 需求计划
+  - code: capacity_utilization
+    name: 产能利用率
+    base_table: f360_capacity_plan
+    expression: 100*SUM(cp.actual_start_wafers)/NULLIF(SUM(cp.available_wafers),0)
+    grain: fab, node, month
+    owner: 制造运营
+  - code: capacity_commitment_rate
+    name: 产能承诺率
+    base_table: f360_capacity_plan
+    expression: 100*SUM(cp.committed_wafers)/NULLIF(SUM(cp.available_wafers),0)
+    grain: fab, node, month
+    owner: 产销协同
+  - code: wafer_start
+    name: 晶圆投片数
+    base_table: f360_wafer_lot
+    expression: SUM(wl.actual_start_wafers)
+    grain: lot
+    owner: 制造运营
+  - code: good_wafer_output
+    name: 良品晶圆产出
+    base_table: f360_wafer_output
+    expression: SUM(wo.good_wafers)
+    grain: lot
+    owner: 制造运营
+  - code: wafer_scrap_rate
+    name: 晶圆报废率
+    base_table: f360_wafer_output
+    expression: 100*SUM(wo.scrapped_wafers)/NULLIF(SUM(wo.completed_wafers),0)
+    grain: selected dimensions
+    owner: 制造质量
+  - code: avg_cycle_time
+    name: 平均生产周期
+    base_table: f360_wafer_output
+    expression: AVG(wo.cycle_time_days)
+    unit: days
+    owner: 制造运营
+  - code: cycle_time_attainment
+    name: 周期达成率
+    base_table: f360_wafer_output
+    expression: 100*AVG(CASE WHEN wo.cycle_time_days<=pr.standard_cycle_days THEN 1 ELSE 0 END)
+    rule: join lot to process route; evaluate once per lot
+    owner: 制造运营
+  - code: cp_yield
+    name: CP 电性良率
+    base_table: f360_yield_result
+    expression: SUM(yr.good_die)/NULLIF(SUM(yr.tested_die),0)*100
+    filter: yr.test_stage = 'CP'
+    owner: 产品工程
+  - code: wat_yield
+    name: WAT 良率
+    base_table: f360_yield_result
+    expression: SUM(yr.good_die)/NULLIF(SUM(yr.tested_die),0)*100
+    filter: yr.test_stage = 'WAT'
+    owner: 工艺整合
+  - code: yield_gap_to_90
+    name: 良率距 90% 差距
+    base_table: f360_yield_result
+    expression: 90-(SUM(yr.good_die)/NULLIF(SUM(yr.tested_die),0)*100)
+    filter: yr.test_stage = 'CP'
+    owner: 产品工程
+  - code: quality_incident_count
+    name: 客诉数量
+    base_table: f360_quality_incident
+    expression: COUNT(DISTINCT qi.incident_id)
+    owner: 客户质量
+  - code: open_critical_incidents
+    name: 未关闭重大客诉
+    base_table: f360_quality_incident
+    expression: COUNT(DISTINCT CASE WHEN qi.incident_status='OPEN' AND qi.severity IN ('CRITICAL','MAJOR') THEN qi.incident_id END)
+    owner: 客户质量
+  - code: quality_closure_days
+    name: 客诉平均关闭天数
+    base_table: f360_quality_incident
+    expression: AVG(qi.closed_date-qi.opened_date)
+    filter: qi.closed_date IS NOT NULL
+    owner: 客户质量
+  - code: unit_wafer_cost
+    name: 单片晶圆成本
+    base_table: f360_product_cost
+    expression: AVG(pc.material_cost_usd+pc.process_cost_usd+pc.overhead_cost_usd+pc.probe_cost_usd+pc.scrap_cost_usd)
+    grain: product, month
+    owner: 财务成本
+  - code: gross_margin
+    name: 毛利额
+    base_table: f360_shipment
+    expression: SUM(s.accepted_wafers*(s.unit_price_usd-cost.unit_wafer_cost))
+    rule: cost must be one row per product and month before joining shipment
+    owner: 财务
+  - code: gross_margin_rate
+    name: 毛利率
+    base_table: f360_shipment
+    expression: 100*SUM(s.accepted_wafers*(s.unit_price_usd-cost.unit_wafer_cost))/NULLIF(SUM(s.accepted_wafers*s.unit_price_usd),0)
+    rule: join cost on product_id and month; do not average product margin percentages
+    owner: 财务
+  - code: inventory_wafers
+    name: 库存晶圆数
+    base_table: f360_inventory_snapshot
+    expression: SUM(inv.wafer_quantity)
+    rule: use latest snapshot in requested period, not sum across snapshots
+    owner: 供应链
+  - code: aged_inventory_wafers
+    name: 超龄库存晶圆数
+    base_table: f360_inventory_snapshot
+    expression: SUM(CASE WHEN inv.aging_days>90 THEN inv.wafer_quantity ELSE 0 END)
+    rule: use latest snapshot; default aging threshold is 90 days
+    owner: 供应链
+  - code: design_win_pipeline
+    name: Design Win 加权管线
+    base_table: f360_design_win
+    expression: SUM(dw.estimated_annual_wafers*dw.probability_pct/100)
+    filter: dw.opportunity_stage NOT IN ('WON','LOST')
+    owner: 市场与销售
+  - code: design_win_rate
+    name: Design Win 赢单率
+    base_table: f360_design_win
+    expression: 100*COUNT(CASE WHEN dw.opportunity_stage='WON' THEN 1 END)/NULLIF(COUNT(CASE WHEN dw.opportunity_stage IN ('WON','LOST') THEN 1 END),0)
+    owner: 市场与销售
+  - code: npi_on_time_rate
+    name: NPI 里程碑准时率
+    base_table: f360_npi_milestone
+    expression: 100*AVG(CASE WHEN nm.actual_date<=nm.planned_date THEN 1 ELSE 0 END)
+    filter: nm.actual_date IS NOT NULL
+    owner: 项目管理
+  - code: downtime_hours
+    name: 设备停机时长
+    base_table: f360_equipment_downtime
+    expression: SUM(ed.downtime_hours)
+    owner: 设备工程
+  - code: lost_capacity_wafers
+    name: 停机损失产能
+    base_table: f360_equipment_downtime
+    expression: SUM(ed.lost_wafers)
+    owner: 制造运营
+  - code: customer_health_score
+    name: 客户健康度
+    base_table: f360_customer_score_snapshot
+    expression: AVG(css.overall_score)
+    rule: use latest score snapshot per customer in scope
+    owner: 客户经营
+  - code: negative_interaction_rate
+    name: 负向互动占比
+    base_table: f360_customer_interaction
+    expression: 100*AVG(CASE WHEN ci.sentiment_score<0 THEN 1 ELSE 0 END)
+    owner: 客户经营
+  - code: app_market_share
+    name: 应用市场份额
+    base_table: f360_application_market
+    expression: 100*SUM(am.fab_revenue_usd)/NULLIF(SUM(am.served_sam_usd),0)
+    rule: compare same quarter; SAM is serviceable market, not global TAM
+    owner: 市场战略
+

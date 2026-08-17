@@ -1,0 +1,18 @@
+[Unit]
+Description=Enterprise AI BI Server
+After=network-online.target qdrant.service
+
+[Service]
+User=aibi
+Group=aibi
+WorkingDirectory=/opt/aibi
+EnvironmentFile=/etc/aibi/aibi.env
+ExecStart=/usr/bin/java -Xms1g -Xmx4g -Dfile.encoding=UTF-8 -jar /opt/aibi/ai-bi-server.jar
+Restart=on-failure
+RestartSec=10
+SuccessExitStatus=143
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

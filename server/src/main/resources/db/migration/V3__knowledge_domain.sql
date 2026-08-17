@@ -1,0 +1,1 @@
+ALTER TABLE knowledge_document ADD COLUMN IF NOT EXISTS domain VARCHAR(100) NOT NULL DEFAULT 'sales';

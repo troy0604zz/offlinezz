@@ -1,0 +1,1 @@
+ALTER TABLE query_run ADD COLUMN IF NOT EXISTS result_json TEXT;

@@ -1,0 +1,18 @@
+[Unit]
+Description=Enterprise AI BI Web Server
+After=network-online.target aibi.service
+Requires=aibi.service
+
+[Service]
+User=aibi
+Group=aibi
+WorkingDirectory=/opt/aibi
+EnvironmentFile=/etc/aibi/aibi-web.env
+ExecStart=/usr/bin/node /opt/aibi/static-server.mjs
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

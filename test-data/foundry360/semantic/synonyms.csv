@@ -1,0 +1,61 @@
+business_term,synonyms,target
+晶圆收入,"晶圆营收,销售收入,wafer revenue,出货收入",wafer_revenue
+订单金额,"接单金额,booking,booked amount,订单额",booked_amount
+晶圆平均售价,"ASP,平均售价,单片售价,wafer ASP",asp
+出货晶圆数,"出货量,shipments,wafer shipment,出片量",shipped_wafers
+验收晶圆数,"客户验收量,accepted wafers,确认数量",accepted_wafers
+未交付积压量,"backlog,积压订单,未交量,订单欠交",backlog_wafers
+按时足量交付率,"OTIF,准时足量率,交付达成率",otif_rate
+预测准确率,"forecast accuracy,预测命中率,FCST准确率",forecast_accuracy
+产能利用率,"稼动率,utilization,产能使用率,capacity utilization",capacity_utilization
+产能承诺率,"commit rate,分配率,产能分配比例",capacity_commitment_rate
+晶圆投片数,"wafer start,投片量,开工片数,starts",wafer_start
+良品晶圆产出,"good wafer output,良片产出,良品片数",good_wafer_output
+晶圆报废率,"scrap rate,报废比例,废片率",wafer_scrap_rate
+平均生产周期,"cycle time,CT,流片周期,制造周期",avg_cycle_time
+周期达成率,"CT达成率,cycle time attainment,周期准交率",cycle_time_attainment
+CP电性良率,"CP yield,终测良率,电测良率,成测良率",cp_yield
+WAT良率,"WAT yield,晶圆验收测试良率,参数测试良率",wat_yield
+客诉数量,"质量投诉数,customer complaint,投诉件数,质量事件数",quality_incident_count
+未关闭重大客诉,"open critical complaint,重大未结案,红色客诉",open_critical_incidents
+客诉平均关闭天数,"投诉结案周期,8D关闭周期,quality closure days",quality_closure_days
+单片晶圆成本,"wafer cost,单位成本,单片成本,unit wafer cost",unit_wafer_cost
+毛利额,"gross margin amount,毛利,贡献毛利",gross_margin
+毛利率,"GM,margin rate,gross margin rate,利润率",gross_margin_rate
+库存晶圆数,"库存量,wafer inventory,库存片数",inventory_wafers
+超龄库存晶圆数,"呆滞库存,aged inventory,90天以上库存,老化库存",aged_inventory_wafers
+Design Win加权管线,"设计赢单管线,weighted pipeline,机会管线,DW pipeline",design_win_pipeline
+Design Win赢单率,"设计赢单率,DW win rate,定点率",design_win_rate
+NPI里程碑准时率,"NPI on time,新品节点达成率,项目准时率",npi_on_time_rate
+设备停机时长,"downtime,设备宕机时长,停机小时",downtime_hours
+停机损失产能,"lost capacity,停机损失片数,设备损失产能",lost_capacity_wafers
+客户健康度,"customer health,客户健康分,客户综合评分",customer_health_score
+负向互动占比,"negative interaction,客户负面沟通比例,负向情绪率",negative_interaction_rate
+应用市场份额,"application share,应用份额,SAM份额,市场占有率",app_market_share
+战略客户,"大客户,strategic account,头部客户",f360_customer.customer_tier='STRATEGIC'
+关键客户,"key account,KA客户",f360_customer.customer_tier='KEY'
+汽车客户,"车用客户,automotive customer,车规客户",f360_customer.market_segment='AUTOMOTIVE'
+HPC客户,"高性能计算客户,算力客户,AI客户",f360_customer.market_segment='HPC'
+大中华区,"中国区,Greater China,GC",f360_geo.region_group='GREATER_CHINA'
+北美,"美洲,NA,North America",f360_geo.geo_code='NA'
+欧洲,"欧区,EU,EMEA",f360_geo.geo_code='EU'
+先进制程,"advanced node,先进节点,14纳米及以下",f360_technology_node.geometry_nm<=14
+成熟制程,"mature node,成熟节点,28纳米及以上",f360_technology_node.geometry_nm>=28
+特色工艺,"specialty process,特种工艺",f360_technology_node.specialty_flag=1
+量产产品,"MP,mass production,量产品",f360_product.lifecycle_stage='MASS_PRODUCTION'
+爬坡产品,"ramp up,产能爬坡,爬坡期产品",f360_product.lifecycle_stage='RAMP_UP'
+NPI产品,"新品导入,新产品,NPI项目",f360_product.lifecycle_stage='NPI'
+车规产品,"automotive grade,汽车芯片,车规芯片",f360_application.market_segment='AUTOMOTIVE'
+重大客诉,"critical complaint,严重投诉",f360_quality_incident.severity IN ('CRITICAL','MAJOR')
+未结案客诉,"open complaint,未关闭投诉",f360_quality_incident.incident_status='OPEN'
+热批,"hot lot,加急批次,急件",f360_wafer_lot.hot_lot_flag=1
+在制品,"WIP,work in process,线内库存",f360_inventory_snapshot.inventory_stage='WIP'
+成品库存,"FG,finished goods,成品片",f360_inventory_snapshot.inventory_stage='FINISHED_GOODS'
+本季度,"this quarter,当季",按当前日期所在自然季度
+上季度,"last quarter,前一季度",按当前日期前一个自然季度
+同比,"YoY,year over year,年增率",与上年同期比较
+环比,"MoM,QoQ,month over month,quarter over quarter",与紧邻上一期间比较
+未来六个月,"next six months,未来半年",从当前月起连续6个自然月
+量产时间,"SOP,mass production date,投产日期",f360_npi_milestone.milestone_type='MASS_PRODUCTION'
+客户定点,"Design Win,DW,设计导入,项目定点",f360_design_win
+

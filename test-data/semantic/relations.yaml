@@ -1,0 +1,6 @@
+relations:
+  - { left: region, right: customer, condition: region.region_id = customer.region_id, cardinality: ONE_TO_MANY }
+  - { left: customer, right: sales_order, condition: customer.customer_id = sales_order.customer_id, cardinality: ONE_TO_MANY }
+  - { left: sales_order, right: sales_order_item, condition: sales_order.order_id = sales_order_item.order_id, cardinality: ONE_TO_MANY }
+  - { left: sales_order_item, right: product, condition: sales_order_item.product_id = product.product_id, cardinality: MANY_TO_ONE }
+  - { left: sales_order, right: refund, condition: sales_order.order_id = refund.order_id, cardinality: ONE_TO_MANY }

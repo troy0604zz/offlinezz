@@ -1,0 +1,25 @@
+Qdrant release: v1.19.0
+Official release: https://github.com/qdrant/qdrant/releases/tag/v1.19.0
+
+Windows x86_64
+  Official asset: qdrant-x86_64-pc-windows-msvc.zip
+  Project file: release/qdrant-x86_64-pc-windows-msvc-v1.19.0.zip
+  Size: 29340688 bytes
+  SHA-256: 980cb2e1ae771155cf211da8c0a8a9206b6482bd4effdc4db994d3adb707b087
+
+Linux x86_64 MUSL (CentOS 7 candidate)
+  Official asset: qdrant-x86_64-unknown-linux-musl.tar.gz
+  Project target file: release/qdrant-x86_64-unknown-linux-musl-v1.19.0.tar.gz
+  Size: 31974028 bytes
+  SHA-256: 9ec667456443463eee390e43cd36988af6b730c6db807b4e39f57c303d0264a3
+  Download script: scripts/download-qdrant-linux.ps1
+
+Linux x86_64 GNU (newer glibc distributions only)
+  Official asset: qdrant-x86_64-unknown-linux-gnu.tar.gz
+  Project file: release/qdrant-x86_64-unknown-linux-gnu-v1.19.0.tar.gz
+  Size: 31828785 bytes
+  SHA-256: e4405091f67d02f96fb941695ef8a6974e677632507ff7b04a3fcbb332ad9c19
+  Warning: do not select this package for CentOS 7 unless it passes a real glibc compatibility test.
+
+The values above come from the official GitHub v1.19.0 release metadata.
+The Linux package must still be executed and persistence-tested on a representative CentOS 7 x86_64 host.

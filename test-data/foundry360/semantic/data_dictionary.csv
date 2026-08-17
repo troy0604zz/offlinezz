@@ -1,0 +1,141 @@
+table_name,column_name,business_name,semantic_role,description,synonyms
+f360_geo,geo_id,区域主键,KEY,区域代理键,region id
+f360_geo,geo_code,区域编码,DIMENSION,稳定区域编码,区域代码
+f360_geo,geo_name,区域名称,DIMENSION,用户展示名称,地区
+f360_geo,region_group,大区,DIMENSION,跨国家经营区域,大区分组
+f360_geo,country_code,国家代码,DIMENSION,ISO风格国家代码,country
+f360_customer,customer_id,客户主键,KEY,客户代理键,customer id
+f360_customer,customer_code,客户编码,DIMENSION,稳定客户业务编码,客户号
+f360_customer,customer_name,客户名称,DIMENSION,虚构客户展示名称,客户
+f360_customer,customer_group,客户集团,DIMENSION,客户所属集团,集团客户
+f360_customer,geo_id,客户区域外键,FOREIGN_KEY,关联f360_geo,客户地区
+f360_customer,market_segment,客户市场板块,DIMENSION,客户所属行业板块,行业
+f360_customer,customer_tier,客户分层,DIMENSION,STRATEGIC KEY GROWTH EMERGING,客户等级
+f360_customer,credit_rating,信用评级,DIMENSION,付款能力评级,信用等级
+f360_customer,account_manager,客户经理,DIMENSION,经营责任人,AM
+f360_customer,customer_status,客户状态,DIMENSION,ACTIVE等状态,状态
+f360_application,application_id,应用主键,KEY,终端应用代理键,application id
+f360_application,application_code,应用编码,DIMENSION,稳定应用编码,应用代码
+f360_application,application_name,应用名称,DIMENSION,终端应用展示名称,Application
+f360_application,market_segment,应用市场板块,DIMENSION,应用所属市场,赛道
+f360_application,end_product,终端产品,DIMENSION,芯片最终使用产品,终端
+f360_application,functional_domain,功能域,DIMENSION,芯片承担的系统功能,功能
+f360_application,safety_grade,安全等级,DIMENSION,车规工业医疗安全规范,车规等级
+f360_application,lifecycle_stage,应用生命周期,DIMENSION,INTRODUCTION GROWTH MATURE,市场阶段
+f360_technology_node,node_id,节点主键,KEY,工艺节点代理键,node id
+f360_technology_node,node_code,节点编码,DIMENSION,稳定节点编码,process node
+f360_technology_node,node_name,节点名称,DIMENSION,工艺节点名称,制程
+f360_technology_node,process_family,工艺家族,DIMENSION,逻辑低功耗闪存功率等,工艺平台
+f360_technology_node,geometry_nm,线宽,METRIC,工艺几何尺寸纳米值,nm
+f360_technology_node,wafer_size_mm,晶圆尺寸,DIMENSION,200或300毫米,wafer size
+f360_technology_node,specialty_flag,特色工艺标志,FILTER,1代表特色工艺,specialty
+f360_fab,fab_id,晶圆厂主键,KEY,晶圆厂代理键,fab id
+f360_fab,fab_code,晶圆厂编码,DIMENSION,稳定晶圆厂编码,fab
+f360_fab,fab_name,晶圆厂名称,DIMENSION,工厂展示名称,厂区
+f360_fab,monthly_capacity_wafers,标称月产能,METRIC,工厂名义月产能,月产能
+f360_process_route,route_id,路线主键,KEY,制程路线代理键,route id
+f360_process_route,route_code,路线编码,DIMENSION,稳定路线编码,flow
+f360_process_route,standard_cycle_days,标准周期,METRIC,路线标准生产自然日,标准CT
+f360_process_route,mask_layer_count,光罩层数,METRIC,路线光罩层数量,mask count
+f360_product,product_id,产品主键,KEY,产品代理键,product id
+f360_product,product_code,产品编码,DIMENSION,稳定产品业务编码,料号
+f360_product,product_name,产品名称,DIMENSION,产品展示名称,芯片产品
+f360_product,customer_id,产品客户外键,FOREIGN_KEY,产品归属客户,所属客户
+f360_product,application_id,产品应用外键,FOREIGN_KEY,产品终端应用,所属应用
+f360_product,node_id,产品节点外键,FOREIGN_KEY,产品制造节点,工艺节点
+f360_product,route_id,产品路线外键,FOREIGN_KEY,产品标准路线,制程路线
+f360_product,primary_fab_id,主生产厂外键,FOREIGN_KEY,产品默认生产工厂,主厂
+f360_product,product_type,产品类型,DIMENSION,ASIC MCU SOC等,芯片类型
+f360_product,die_size_mm2,芯片面积,METRIC,单颗Die面积平方毫米,die size
+f360_product,gross_die_per_wafer,单片理论Die数,METRIC,每片晶圆理论裸片数,GDPW
+f360_product,qualification_status,认证状态,DIMENSION,ENGINEERING或QUALIFIED,qualification
+f360_product,lifecycle_stage,产品生命周期,DIMENSION,NPI RAMP_UP MASS_PRODUCTION EOL,产品阶段
+f360_sales_order,order_id,订单主键,KEY,销售订单代理键,order id
+f360_sales_order,order_no,订单号,DIMENSION,销售订单业务编号,SO
+f360_sales_order,customer_id,订单客户外键,FOREIGN_KEY,下单客户,买方
+f360_sales_order,order_date,订单日期,TIME,接单统计日期,booking date
+f360_sales_order,requested_delivery_date,客户要求日期,TIME,客户要求交付日期,request date
+f360_sales_order,order_status,订单状态,DIMENSION,COMPLETED ON_HOLD CANCELLED,SO状态
+f360_order_line,order_line_id,订单行主键,KEY,订单行代理键,line id
+f360_order_line,product_id,订单产品外键,FOREIGN_KEY,订单行产品,料号
+f360_order_line,ordered_wafers,订购晶圆数,METRIC,订单行晶圆数量,订单量
+f360_order_line,unit_price_usd,订单单价,METRIC,订单行美元单片价格,订单ASP
+f360_order_line,discount_amount_usd,折扣金额,METRIC,订单行总折扣,discount
+f360_order_line,promised_date,承诺交期,TIME,订单行承诺交付日期,commit date
+f360_wafer_lot,lot_id,批次主键,KEY,晶圆批次代理键,lot id
+f360_wafer_lot,lot_no,批次号,DIMENSION,制造批次业务编号,lot
+f360_wafer_lot,actual_start_wafers,实际投片数,METRIC,批次实际开工晶圆数,starts
+f360_wafer_lot,start_date,投片日期,TIME,批次开工日期,wafer start date
+f360_wafer_lot,hot_lot_flag,热批标志,FILTER,1代表加急批次,hot lot
+f360_wafer_output,completion_date,完成日期,TIME,批次制造完成日期,output date
+f360_wafer_output,completed_wafers,完成晶圆数,METRIC,完成制造的晶圆数量,completed wafers
+f360_wafer_output,good_wafers,良品晶圆数,METRIC,制造良品晶圆数量,good wafers
+f360_wafer_output,scrapped_wafers,报废晶圆数,METRIC,制造报废晶圆数量,scrap wafers
+f360_wafer_output,cycle_time_days,生产周期,METRIC,实际制造自然日,CT
+f360_wafer_output,hold_hours,Hold时长,METRIC,批次暂停累计小时,hold time
+f360_yield_result,test_stage,测试阶段,DIMENSION,WAT或CP,yield stage
+f360_yield_result,tested_die,测试Die数,METRIC,良率计算分母,test quantity
+f360_yield_result,good_die,良品Die数,METRIC,良率计算分子,pass die
+f360_yield_result,electrical_yield_pct,电性良率百分比,METRIC,0到100百分数,yield
+f360_yield_result,defect_density,缺陷密度,METRIC,单位面积缺陷统计,DD
+f360_shipment,shipment_id,出货主键,KEY,出货代理键,shipment id
+f360_shipment,ship_date,出货日期,TIME,收入和出货统计日期,delivery date
+f360_shipment,actual_delivery_date,客户收货日期,TIME,OTIF实际完成日期,arrival date
+f360_shipment,shipped_wafers,出货晶圆数,METRIC,实际发出晶圆数量,shipment qty
+f360_shipment,accepted_wafers,验收晶圆数,METRIC,客户接受且可确认收入数量,accepted qty
+f360_shipment,unit_price_usd,实际出货单价,METRIC,收入确认美元单价,actual ASP
+f360_shipment,shipment_status,出货状态,DIMENSION,DELIVERED或CUSTOMER_HOLD,delivery status
+f360_customer_forecast,forecast_version,预测版本,DIMENSION,本测试使用PLAN_2026,FCST version
+f360_customer_forecast,forecast_month,预测月份,TIME,自然月第一天,FCST month
+f360_customer_forecast,forecast_wafers,预测晶圆数,METRIC,客户产品月预测量,forecast qty
+f360_customer_forecast,confidence_pct,预测信心度,METRIC,0到100百分数,confidence
+f360_capacity_plan,capacity_month,产能月份,TIME,自然月第一天,capacity month
+f360_capacity_plan,available_wafers,可用产能,METRIC,已扣计划维护损失的产能,available capacity
+f360_capacity_plan,committed_wafers,承诺产能,METRIC,已分配客户和产品的产能,committed capacity
+f360_capacity_plan,actual_start_wafers,实际投片,METRIC,产能表月实际投片,actual starts
+f360_capacity_plan,maintenance_loss_wafers,维护损失,METRIC,计划维护影响晶圆数,maintenance loss
+f360_price_agreement,effective_from,协议开始日,TIME,价格有效期开始,price from
+f360_price_agreement,effective_to,协议结束日,TIME,价格有效期结束,price to
+f360_price_agreement,agreed_unit_price_usd,协议单价,METRIC,合同美元单片价格,contract ASP
+f360_price_agreement,rebate_pct,返点比例,METRIC,0到100百分数,rebate
+f360_product_cost,cost_month,成本月份,TIME,产品成本月,month
+f360_product_cost,material_cost_usd,材料成本,METRIC,单片材料成本,material cost
+f360_product_cost,process_cost_usd,制程成本,METRIC,单片制程成本,process cost
+f360_product_cost,overhead_cost_usd,制造费用,METRIC,单片间接制造费用,overhead
+f360_product_cost,probe_cost_usd,测试成本,METRIC,单片探针测试成本,probe cost
+f360_product_cost,scrap_cost_usd,报废成本,METRIC,单片分摊报废成本,scrap cost
+f360_inventory_snapshot,snapshot_date,库存快照日,TIME,月末快照日期,snapshot
+f360_inventory_snapshot,inventory_stage,库存阶段,DIMENSION,WIP或FINISHED_GOODS,stock stage
+f360_inventory_snapshot,wafer_quantity,库存晶圆数,METRIC,快照晶圆数量,stock qty
+f360_inventory_snapshot,aging_days,库龄天数,METRIC,库存老化自然日,age
+f360_inventory_snapshot,reserved_wafers,预留晶圆数,METRIC,已分配不可自由使用数量,reserved
+f360_quality_incident,incident_no,质量事件号,DIMENSION,客户质量事件编号,complaint no
+f360_quality_incident,opened_date,客诉开启日,TIME,质量事件创建日期,open date
+f360_quality_incident,closed_date,客诉关闭日,TIME,结案日期可为空,close date
+f360_quality_incident,severity,严重度,DIMENSION,CRITICAL MAJOR MINOR,严重等级
+f360_quality_incident,affected_wafers,影响晶圆数,METRIC,质量事件涉及数量,affected qty
+f360_quality_incident,incident_status,客诉状态,DIMENSION,OPEN或CLOSED,complaint status
+f360_customer_interaction,interaction_date,互动日期,TIME,客户沟通日期,touch date
+f360_customer_interaction,interaction_type,互动类型,DIMENSION,QBR技术预测质量评审,touch type
+f360_customer_interaction,sentiment_score,情绪分,METRIC,负值负向正值正向,sentiment
+f360_customer_interaction,action_status,行动状态,DIMENSION,OPEN CLOSED OVERDUE,follow up
+f360_design_win,opportunity_stage,机会阶段,DIMENSION,RFQ到WON LOST,stage
+f360_design_win,probability_pct,赢单概率,METRIC,0到100百分数,probability
+f360_design_win,estimated_annual_wafers,预计年需求,METRIC,机会满产年晶圆数,annual demand
+f360_design_win,target_sop_date,目标量产日,TIME,机会预期SOP,SOP
+f360_npi_milestone,milestone_type,里程碑类型,DIMENSION,TAPE_OUT到MASS_PRODUCTION,NPI gate
+f360_npi_milestone,planned_date,计划日期,TIME,里程碑基线日期,baseline date
+f360_npi_milestone,actual_date,实际日期,TIME,完成日期可为空,complete date
+f360_npi_milestone,risk_level,项目风险,DIMENSION,HIGH MEDIUM LOW,NPI risk
+f360_equipment_downtime,downtime_hours,停机小时,METRIC,设备停机累计小时,downtime
+f360_equipment_downtime,downtime_type,停机类型,DIMENSION,PLANNED或UNPLANNED,down type
+f360_equipment_downtime,lost_wafers,损失产能,METRIC,停机估算损失晶圆数,lost capacity
+f360_customer_score_snapshot,snapshot_date,评分日期,TIME,季度客户健康快照,score date
+f360_customer_score_snapshot,overall_score,客户健康总分,METRIC,五维加权综合分,health score
+f360_customer_score_snapshot,risk_level,客户风险,DIMENSION,HIGH MEDIUM LOW,customer risk
+f360_application_market,market_quarter,市场季度,TIME,自然季度首日,quarter
+f360_application_market,global_tam_usd,全球TAM,METRIC,全球理论市场规模,TAM
+f360_application_market,served_sam_usd,可服务SAM,METRIC,本厂可服务市场规模,SAM
+f360_application_market,fab_revenue_usd,本厂应用收入,METRIC,用于份额计算的应用收入,fab revenue
+f360_application_market,market_growth_pct,市场增长率,METRIC,0到100百分数允许负值,market growth
+

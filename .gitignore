@@ -1,0 +1,15 @@
+server/target/
+web/node_modules/
+web/dist/
+web/*.tsbuildinfo
+.artifact-build/
+data/
+logs/
+runtime/
+.idea/
+.vscode/
+*.iml
+offline/maven-repository/
+offline/apache-maven-3.9.11/
+release/ai-bi-server.jar
+release/web/

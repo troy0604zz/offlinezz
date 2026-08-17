@@ -1,0 +1,42 @@
+domain: sales
+relations:
+  - { left: f360_geo, right: f360_customer, join_type: INNER, condition: f360_geo.geo_id = f360_customer.geo_id, cardinality: ONE_TO_MANY }
+  - { left: f360_geo, right: f360_fab, join_type: INNER, condition: f360_geo.geo_id = f360_fab.geo_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_product, join_type: INNER, condition: f360_customer.customer_id = f360_product.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_application, right: f360_product, join_type: INNER, condition: f360_application.application_id = f360_product.application_id, cardinality: ONE_TO_MANY }
+  - { left: f360_technology_node, right: f360_product, join_type: INNER, condition: f360_technology_node.node_id = f360_product.node_id, cardinality: ONE_TO_MANY }
+  - { left: f360_technology_node, right: f360_process_route, join_type: INNER, condition: f360_technology_node.node_id = f360_process_route.node_id, cardinality: ONE_TO_MANY }
+  - { left: f360_process_route, right: f360_product, join_type: INNER, condition: f360_process_route.route_id = f360_product.route_id, cardinality: ONE_TO_MANY }
+  - { left: f360_fab, right: f360_product, join_type: INNER, condition: f360_fab.fab_id = f360_product.primary_fab_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_sales_order, join_type: INNER, condition: f360_customer.customer_id = f360_sales_order.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_sales_order, right: f360_order_line, join_type: INNER, condition: f360_sales_order.order_id = f360_order_line.order_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_order_line, join_type: INNER, condition: f360_product.product_id = f360_order_line.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_order_line, right: f360_wafer_lot, join_type: LEFT, condition: f360_order_line.order_line_id = f360_wafer_lot.order_line_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_wafer_lot, join_type: INNER, condition: f360_product.product_id = f360_wafer_lot.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_fab, right: f360_wafer_lot, join_type: INNER, condition: f360_fab.fab_id = f360_wafer_lot.fab_id, cardinality: ONE_TO_MANY }
+  - { left: f360_process_route, right: f360_wafer_lot, join_type: INNER, condition: f360_process_route.route_id = f360_wafer_lot.route_id, cardinality: ONE_TO_MANY }
+  - { left: f360_wafer_lot, right: f360_wafer_output, join_type: INNER, condition: f360_wafer_lot.lot_id = f360_wafer_output.lot_id, cardinality: ONE_TO_ONE }
+  - { left: f360_wafer_lot, right: f360_yield_result, join_type: INNER, condition: f360_wafer_lot.lot_id = f360_yield_result.lot_id, cardinality: ONE_TO_MANY }
+  - { left: f360_order_line, right: f360_shipment, join_type: LEFT, condition: f360_order_line.order_line_id = f360_shipment.order_line_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_customer_forecast, join_type: INNER, condition: f360_customer.customer_id = f360_customer_forecast.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_customer_forecast, join_type: INNER, condition: f360_product.product_id = f360_customer_forecast.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_fab, right: f360_capacity_plan, join_type: INNER, condition: f360_fab.fab_id = f360_capacity_plan.fab_id, cardinality: ONE_TO_MANY }
+  - { left: f360_technology_node, right: f360_capacity_plan, join_type: INNER, condition: f360_technology_node.node_id = f360_capacity_plan.node_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_price_agreement, join_type: INNER, condition: f360_customer.customer_id = f360_price_agreement.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_price_agreement, join_type: INNER, condition: f360_product.product_id = f360_price_agreement.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_product_cost, join_type: INNER, condition: f360_product.product_id = f360_product_cost.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_inventory_snapshot, join_type: INNER, condition: f360_product.product_id = f360_inventory_snapshot.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_fab, right: f360_inventory_snapshot, join_type: INNER, condition: f360_fab.fab_id = f360_inventory_snapshot.fab_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_quality_incident, join_type: INNER, condition: f360_customer.customer_id = f360_quality_incident.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_quality_incident, join_type: INNER, condition: f360_product.product_id = f360_quality_incident.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_wafer_lot, right: f360_quality_incident, join_type: LEFT, condition: f360_wafer_lot.lot_id = f360_quality_incident.lot_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_customer_interaction, join_type: INNER, condition: f360_customer.customer_id = f360_customer_interaction.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_design_win, join_type: INNER, condition: f360_customer.customer_id = f360_design_win.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_application, right: f360_design_win, join_type: INNER, condition: f360_application.application_id = f360_design_win.application_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_design_win, join_type: LEFT, condition: f360_product.product_id = f360_design_win.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_product, right: f360_npi_milestone, join_type: INNER, condition: f360_product.product_id = f360_npi_milestone.product_id, cardinality: ONE_TO_MANY }
+  - { left: f360_fab, right: f360_equipment_downtime, join_type: INNER, condition: f360_fab.fab_id = f360_equipment_downtime.fab_id, cardinality: ONE_TO_MANY }
+  - { left: f360_technology_node, right: f360_equipment_downtime, join_type: INNER, condition: f360_technology_node.node_id = f360_equipment_downtime.node_id, cardinality: ONE_TO_MANY }
+  - { left: f360_customer, right: f360_customer_score_snapshot, join_type: INNER, condition: f360_customer.customer_id = f360_customer_score_snapshot.customer_id, cardinality: ONE_TO_MANY }
+  - { left: f360_application, right: f360_application_market, join_type: INNER, condition: f360_application.application_id = f360_application_market.application_id, cardinality: ONE_TO_MANY }
+

@@ -1,0 +1,16 @@
+metrics:
+  - code: gross_sales
+    name: 销售额
+    expression: SUM(i.quantity * i.unit_price - i.discount_amount)
+    filter: o.order_status = 'COMPLETED'
+    owner: 销售运营部
+  - code: net_sales
+    name: 净销售额
+    expression: gross_sales - completed_refund_amount
+    rule: refund must be aggregated by order_id before joining order items
+    owner: 财务部
+  - code: customer_count
+    name: 成交客户数
+    expression: COUNT(DISTINCT o.customer_id)
+    filter: o.order_status = 'COMPLETED'
+    owner: 销售运营部

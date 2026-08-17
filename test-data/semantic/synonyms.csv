@@ -1,0 +1,5 @@
+business_term,synonyms,target
+净销售额,"实际销售额,销售净额,净营收",net_sales
+销售额,"合同额,订单金额,营收",gross_sales
+成交客户数,"客户数,购买客户,下单客户",customer_count
+华东,"东区,华东区,East",region.region_code=EAST

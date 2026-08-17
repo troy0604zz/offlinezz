@@ -1,0 +1,11 @@
+log_level: INFO
+storage:
+  storage_path: D:/AIData/Qdrant/storage
+  snapshots_path: D:/AIData/Qdrant/snapshots
+  on_disk_payload: true
+service:
+  host: 127.0.0.1
+  http_port: 6333
+  grpc_port: 6334
+  enable_cors: false
+telemetry_disabled: true

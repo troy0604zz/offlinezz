@@ -1,0 +1,15 @@
+[Unit]
+Description=Ollama Local LLM Service
+After=network-online.target
+
+[Service]
+User=ollama
+Group=ollama
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+Environment="OLLAMA_MODELS=/opt/ollama/models"
+ExecStart=/opt/ollama/bin/ollama serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

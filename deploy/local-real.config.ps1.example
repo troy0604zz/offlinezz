@@ -1,0 +1,41 @@
+# Copy this file to runtime/local-real.config.ps1 and replace only the password.
+# runtime/ is ignored by Git so the password will not be committed.
+
+$env:SPRING_PROFILES_ACTIVE = 'real'
+$env:SERVER_PORT = '8080'
+$env:DB_URL = 'jdbc:oracle:thin:@//127.0.0.1:1521/AIBIPDB1'
+$env:DB_USERNAME = 'aibi'
+$env:DB_PASSWORD = 'REPLACE_WITH_LOCAL_ORACLE_PASSWORD'
+$env:FLYWAY_ENABLED = 'true'
+$env:AI_MODE = 'real'
+$env:AI_CHAT_PROVIDER = 'ollama'
+$env:AI_EMBEDDING_PROVIDER = 'ollama'
+$env:OLLAMA_BASE_URL = 'http://127.0.0.1:11434'
+$env:OLLAMA_CHAT_MODEL = 'qwen3.5:9b-q4_K_M'
+$env:OLLAMA_EMBEDDING_MODEL = 'bge-m3:latest'
+$env:OLLAMA_CONTEXT_LENGTH = '8192'
+$env:OLLAMA_TIMEOUT_SECONDS = '300'
+$env:QWEN_API_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
+$env:DASHSCOPE_API_KEY = '' # 仅放在 runtime/local-real.config.ps1，不要提交
+$env:QWEN_API_CHAT_MODEL = 'qwen3.8-max'
+$env:QWEN_API_EMBEDDING_MODEL = 'qwen3.7-text-embedding'
+$env:QWEN_API_EMBEDDING_DIMENSIONS = '1024'
+$env:QWEN_API_TIMEOUT_SECONDS = '120'
+$env:QDRANT_BASE_URL = 'http://127.0.0.1:6333'
+$env:QDRANT_API_KEY = ''
+$env:QDRANT_COLLECTION_PREFIX = 'aibi'
+$env:QDRANT_VECTOR_SIZE = '1024'
+$env:QUERY_DEFAULT_LIMIT = '200'
+$env:QUERY_MAX_LIMIT = '1000'
+$env:QUERY_TIMEOUT_SECONDS = '30'
+$env:STORAGE_ROOT = 'D:\AIData\AIBI\storage'
+$env:OLLAMA_MODELS = 'D:\AIData\Ollama\models'
+$env:OLLAMA_HOST = '127.0.0.1:11434'
+
+$LocalPaths = @{
+    JavaExe      = 'D:\Tool\Java\jdk17\bin\java.exe'
+    NodeExe      = 'D:\Tool\Node\node-v22.23.2-win-x64\node.exe'
+    OllamaExe    = 'D:\Tool\Ollama\0.32.6\ollama.exe'
+    QdrantExe    = 'D:\Tool\Qdrant\1.19.0\qdrant.exe'
+    QdrantConfig = Join-Path $ProjectRoot 'deploy\qdrant\config.windows.yaml'
+}

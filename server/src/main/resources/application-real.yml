@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:oracle:thin:@//127.0.0.1:1521/AIBIPDB1}
+    username: ${DB_USERNAME:aibi}
+    password: ${DB_PASSWORD:change-me}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+    locations: classpath:db/oracle-migration
+    baseline-on-migrate: false
+
+app:
+  ai:
+    mode: ${AI_MODE:real}

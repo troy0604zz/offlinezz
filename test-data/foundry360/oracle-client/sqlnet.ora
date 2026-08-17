@@ -1,0 +1,5 @@
+# Optional SQL*Plus client override for password authentication on Windows.
+# Use only by setting TNS_ADMIN for the current import process.
+SQLNET.AUTHENTICATION_SERVICES = (NONE)
+NAMES.DIRECTORY_PATH = (TNSNAMES, EZCONNECT)
+
