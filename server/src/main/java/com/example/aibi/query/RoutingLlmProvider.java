@@ -34,6 +34,9 @@ public class RoutingLlmProvider implements LlmProvider {
         return delegate().providerName();
     }
 
+    @Override
+    public String completeJson(String system,String user) { return delegate().completeJson(system,user); }
+
     private LlmProvider delegate() {
         return ModelRuntimeService.QWEN_API.equals(runtime.selection().chatProvider()) ? qwenApi : ollama;
     }

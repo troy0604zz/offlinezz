@@ -2,7 +2,7 @@ import type { QueryAnswer, QueryExportFormat, QueryFeedback } from '../types/que
 import { http } from './http'
 
 export const queryApi = {
-  ask: (question: string, knowledgeDomain = 'sales') =>
+  ask: (question: string, knowledgeDomain: string) =>
     http.post<QueryAnswer>('/questions', { question, knowledgeDomain }),
   feedback: (queryRunId: string, feedback: QueryFeedback) =>
     http.post(`/query-runs/${queryRunId}/feedback`, feedback),

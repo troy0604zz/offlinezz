@@ -8,5 +8,6 @@ import java.util.Map;
 public interface LlmProvider {
     GeneratedQuery generateSql(String knowledgeDomain, String question, List<KnowledgeChunk> context, List<Map<String, Object>> metrics,
                                List<Map<String, Object>> relations);
+    String completeJson(String system, String user);
     String providerName();
 }

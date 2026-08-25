@@ -24,7 +24,15 @@ public class KnowledgeController {
     }
 
     @GetMapping("/documents")
-    public List<Map<String, Object>> documents() { return service.listDocuments(); }
+    public List<Map<String, Object>> documents(@RequestParam String domain) { return service.listDocuments(domain); }
+
+    @PutMapping("/documents/{id}")
+    public Map<String,Object> update(@PathVariable long id,@RequestParam String domain,@RequestBody DocumentUpdate request) {
+        return service.update(id,domain,request.fileName(),request.status());
+    }
+
+    @DeleteMapping("/documents/{id}")
+    public Map<String,Object> delete(@PathVariable long id,@RequestParam String domain) { return service.delete(id,domain); }
 
     @GetMapping("/search")
     public List<KnowledgeChunk> search(@RequestParam(defaultValue = "sales") String domain,
@@ -32,5 +40,6 @@ public class KnowledgeController {
                                        @RequestParam(defaultValue = "5") @Min(1) @Max(20) int topK) {
         return service.search(domain, query, topK);
     }
-}
 
+    public record DocumentUpdate(String fileName,String status) {}
+}

@@ -18,8 +18,8 @@ public class SqlPromptFactory {
 
     public SqlPrompt create(String knowledgeDomain, String question, List<KnowledgeChunk> context,
                             List<Map<String, Object>> metrics, List<Map<String, Object>> relations) {
-        List<SqlExampleMatch> examples = training.relevantExamples(knowledgeDomain, question, 3);
-        if (!examples.isEmpty() && examples.get(0).score() >= 0.90) {
+        List<SqlExampleMatch> examples = training.relevantExamples(knowledgeDomain, question, context, 3);
+        if (!examples.isEmpty() && examples.get(0).score() >= 0.78) {
             SqlExampleMatch match = examples.get(0);
             GeneratedQuery direct = new GeneratedQuery(match.sql(),
                     "命中管理员发布的高相似度标准 SQL：" + match.question(),

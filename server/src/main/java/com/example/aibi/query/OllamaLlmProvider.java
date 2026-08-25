@@ -50,4 +50,15 @@ public class OllamaLlmProvider implements LlmProvider {
     public String providerName() {
         return "ollama:" + properties.ai().ollama().chatModel();
     }
+
+    @Override
+    public String completeJson(String system,String user) {
+        Map<String,Object> body=Map.of(
+                "model",properties.ai().ollama().chatModel(),"stream",false,"format","json","think",false,
+                "messages",List.of(Map.of("role","system","content",system),Map.of("role","user","content",user)),
+                "options",Map.of("temperature",0.1,"num_ctx",properties.ai().ollama().contextLength()));
+        JsonNode response=client.post().uri("/api/chat").body(body).retrieve().body(JsonNode.class);
+        if(response==null) throw new IllegalStateException("Ollama 返回了空响应");
+        return response.path("message").path("content").asText();
+    }
 }

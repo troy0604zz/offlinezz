@@ -28,7 +28,7 @@ public class QueryController {
     public QueryAnswer ask(@RequestBody @Valid AskRequest request) { return orchestrator.ask(request); }
 
     @GetMapping("/query-runs")
-    public List<Map<String, Object>> history() { return orchestrator.history(); }
+    public List<Map<String, Object>> history(@RequestParam(defaultValue="sales") String domain) { return orchestrator.history(domain); }
 
     @PostMapping("/query-runs/{id}/feedback")
     public Map<String, Object> feedback(@PathVariable String id, @RequestBody @Valid FeedbackRequest request) {

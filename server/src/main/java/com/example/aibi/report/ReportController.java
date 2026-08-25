@@ -17,6 +17,8 @@ public class ReportController {
     public Map<String, Object> generate(@RequestBody @Valid ReportRequest request) { return service.generate(request); }
 
     @GetMapping
-    public List<Map<String, Object>> list() { return service.list(); }
-}
+    public List<Map<String, Object>> list(@RequestParam(defaultValue="sales") String domain) { return service.list(domain); }
 
+    @GetMapping("/{id}")
+    public Map<String,Object> detail(@PathVariable String id){return service.detail(id);}
+}

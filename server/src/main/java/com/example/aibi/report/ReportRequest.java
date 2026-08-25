@@ -5,5 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public record ReportRequest(@NotBlank @Size(max = 500) String title,
                             @NotBlank @Size(max = 2000) String request,
-                            String knowledgeDomain) {}
-
+                            String knowledgeDomain) {
+    public String domainOrDefault(){return knowledgeDomain==null||knowledgeDomain.isBlank()?"sales":knowledgeDomain;}
+}

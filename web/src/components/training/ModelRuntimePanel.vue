@@ -79,7 +79,7 @@ onMounted(load)
         </el-radio-group>
         <div class="model-value" v-if="runtime && form.embeddingProvider === 'ollama'"><label>本地模型</label><strong>{{ runtime.ollamaEmbeddingModel }}</strong></div>
         <el-form-item v-else label="官方模型标识"><el-input v-model="form.qwenEmbeddingModel" placeholder="qwen3.7-text-embedding" /></el-form-item>
-        <el-checkbox v-if="embeddingWillChange" v-model="form.reindexKnowledge">切换时重新索引已发布文档（推荐）</el-checkbox>
+        <el-alert v-if="embeddingWillChange" type="warning" :closable="false" show-icon title="向量模型变更时将强制重建当前所有数据域的检索索引。" />
       </div>
     </div>
     <div class="runtime-footer"><p v-if="runtime">API 地址：{{ runtime.qwenApiHost }} · Key 不会返回到前端</p><el-button type="primary" size="large" :loading="saving" @click="save">保存并应用</el-button></div>

@@ -8,7 +8,7 @@ public final class TrainingRequests {
 
     public record SchemaAsset(@NotBlank String domain, @NotBlank @Size(max=200) String name,
                               @NotBlank String dialect, @NotBlank String ddlText, String description) {}
-    public record Relation(@NotBlank String leftTable, @NotBlank String rightTable, @NotBlank String joinType,
+    public record Relation(@NotBlank String domain, @NotBlank String leftTable, @NotBlank String rightTable, @NotBlank String joinType,
                            @NotBlank String joinCondition, @NotBlank String cardinality) {}
     public record Synonym(@NotBlank String domain, @NotBlank String businessTerm,
                           @NotBlank String synonyms, @NotBlank String targetExpression) {}

@@ -1,6 +1,8 @@
 package com.example.aibi.config;
 
+import com.example.aibi.common.BusinessException;
 import com.example.aibi.knowledge.KnowledgeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,9 +30,18 @@ public class ModelRuntimeController {
     @PutMapping
     public Map<String, Object> update(@RequestBody ModelRuntimeService.UpdateRequest request) {
         ModelRuntimeService.UpdateResult result = runtime.update(request);
-        boolean reindexed = result.embeddingChanged() && request.reindexKnowledge();
-        if (reindexed) knowledge.restorePublishedIndex();
+        boolean reindexed = result.embeddingChanged();
+        if (reindexed) {
+            try { knowledge.rebuildAllDomains(); }
+            catch(RuntimeException failure) {
+                runtime.restore(result.previous());
+                throw new BusinessException("EMBEDDING_REINDEX_FAILED",
+                        "向量模型切换已撤销，知识索引重建失败："+rootMessage(failure),HttpStatus.BAD_REQUEST);
+            }
+        }
         return Map.of("runtime", result.runtime(), "embeddingChanged", result.embeddingChanged(),
                 "knowledgeReindexed", reindexed);
     }
+
+    private String rootMessage(Throwable error){while(error.getCause()!=null)error=error.getCause();return error.getMessage();}
 }

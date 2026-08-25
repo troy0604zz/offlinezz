@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -42,10 +43,56 @@ public class QdrantVectorStoreAdapter implements VectorStorePort {
             KnowledgeChunk chunk = chunks.get(i);
             Map<String, Object> payload = new LinkedHashMap<>(chunk.metadata());
             payload.put("content", chunk.content());
+            payload.put("embeddingProvider", embeddings.providerName());
+            payload.put("embeddingModel", embeddings.modelName());
             points.add(Map.of("id", stableUuid(chunk.id()), "vector", vectors.get(i), "payload", payload));
         }
         qdrant.put().uri("/collections/{name}/points?wait=true", collection)
                 .body(Map.of("points", points)).retrieve().toBodilessEntity();
+    }
+
+    @Override
+    public void clear(String knowledgeDomain) {
+        deleteCollection(collection(knowledgeDomain));
+    }
+
+    @Override
+    public List<String> purgeManaged(String knowledgeDomain, VectorAssetType assetType) {
+        List<String> collections = managedCollections();
+        if (knowledgeDomain == null && assetType == null) {
+            collections.forEach(this::deleteCollection);
+            return collections;
+        }
+        List<Map<String, Object>> must = new ArrayList<>();
+        if (knowledgeDomain != null) {
+            must.add(Map.of("key", "domain", "match", Map.of("value", knowledgeDomain)));
+        }
+        if (assetType != null) {
+            must.add(Map.of("key", "assetType", "match", Map.of("value", assetType.name())));
+        }
+        Map<String, Object> request = Map.of("filter", Map.of("must", must));
+        for (String collection : collections) {
+            try {
+                qdrant.post().uri("/collections/{name}/points/delete?wait=true", collection)
+                        .body(request).retrieve().toBodilessEntity();
+            } catch (RestClientResponseException responseError) {
+                if (responseError.getStatusCode().value() != 404) throw responseError;
+            }
+        }
+        return collections;
+    }
+
+    @Override
+    public void invalidateOtherEmbeddings(String knowledgeDomain) {
+        String active=collection(knowledgeDomain);
+        String prefix=sanitize(properties.ai().qdrant().collectionPrefix())+"_";
+        String suffix="_"+sanitize(knowledgeDomain);
+        JsonNode response=qdrant.get().uri("/collections").retrieve().body(JsonNode.class);
+        if(response==null) throw new IllegalStateException("Qdrant 集合列表为空");
+        for(JsonNode item:response.path("result").path("collections")) {
+            String name=item.path("name").asText();
+            if(!name.equals(active)&&name.startsWith(prefix)&&name.endsWith(suffix)) deleteCollection(name);
+        }
     }
 
     @Override
@@ -98,6 +145,29 @@ public class QdrantVectorStoreAdapter implements VectorStorePort {
         String identity = ModelRuntimeService.OLLAMA.equals(embeddings.providerName())
                 ? "" : "_" + embeddings.providerName() + "_" + embeddings.modelName();
         return (prefix + identity + "_" + domain).replaceAll("[^a-zA-Z0-9_-]", "_");
+    }
+
+    private String sanitize(String value) { return value.replaceAll("[^a-zA-Z0-9_-]", "_"); }
+
+    private List<String> managedCollections() {
+        String prefix = sanitize(properties.ai().qdrant().collectionPrefix()) + "_";
+        JsonNode response = qdrant.get().uri("/collections").retrieve().body(JsonNode.class);
+        if (response == null) throw new IllegalStateException("Qdrant 集合列表为空");
+        List<String> result = new ArrayList<>();
+        for (JsonNode item : response.path("result").path("collections")) {
+            String name = item.path("name").asText();
+            if (name.startsWith(prefix)) result.add(name);
+        }
+        return result;
+    }
+
+    private void deleteCollection(String name) {
+        try {
+            qdrant.delete().uri("/collections/{name}", name).retrieve().toBodilessEntity();
+        } catch (RestClientResponseException responseError) {
+            if (responseError.getStatusCode().value() != 404) throw responseError;
+            // A missing collection is already the desired state. Connection and server errors must propagate.
+        }
     }
 
     private String stableUuid(String value) {

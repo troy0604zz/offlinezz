@@ -36,6 +36,10 @@ public class SqlGuard {
     public SqlGuard(AiBiProperties properties) { this.properties = properties; }
 
     public ValidationResult validate(String sql) {
+        return validate(sql, ALLOWED);
+    }
+
+    public ValidationResult validate(String sql, Set<String> allowedTables) {
         if (sql == null || sql.isBlank()) reject("SQL_EMPTY", "生成 SQL 为空");
         String normalized = sql.strip().replaceFirst(";+\\s*$", "");
         try {
@@ -64,7 +68,7 @@ public class SqlGuard {
         Matcher cteMatcher = CTE_PATTERN.matcher(tableScanSql);
         while (cteMatcher.find()) cteNames.add(cteMatcher.group(1).toLowerCase(Locale.ROOT));
         Set<String> unknown = new LinkedHashSet<>(tables);
-        unknown.removeAll(ALLOWED);
+        unknown.removeAll(allowedTables.stream().map(value -> value.toLowerCase(Locale.ROOT)).collect(java.util.stream.Collectors.toSet()));
         unknown.removeAll(cteNames);
         if (!unknown.isEmpty()) reject("SQL_UNKNOWN_TABLE", "SQL 使用了未授权对象：" + unknown);
         return new ValidationResult(normalized, tables, properties.query().maxLimit());

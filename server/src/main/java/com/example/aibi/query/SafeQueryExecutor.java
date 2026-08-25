@@ -3,8 +3,8 @@ package com.example.aibi.query;
 import com.example.aibi.common.BusinessException;
 import com.example.aibi.common.DatabaseRows;
 import com.example.aibi.config.AiBiProperties;
+import com.example.aibi.domain.DomainDataSourceService;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSetMetaData;
@@ -15,23 +15,21 @@ import java.util.Map;
 
 @Component
 public class SafeQueryExecutor {
-    private final JdbcTemplate jdbc;
+    private final DomainDataSourceService dataSources;
     private final AiBiProperties properties;
 
-    public SafeQueryExecutor(JdbcTemplate jdbc, AiBiProperties properties) {
-        this.jdbc = jdbc;
+    public SafeQueryExecutor(DomainDataSourceService dataSources, AiBiProperties properties) {
+        this.dataSources = dataSources;
         this.properties = properties;
     }
 
-    public List<Map<String, Object>> execute(SqlGuard.ValidationResult validation) {
-        try {
-            List<Map<String, Object>> rows = jdbc.query(connection -> {
-                var statement = connection.prepareStatement(validation.sql());
+    public List<Map<String, Object>> execute(String domain, SqlGuard.ValidationResult validation) {
+        try (var connection = dataSources.open(domain);
+             var statement = connection.prepareStatement(validation.sql())) {
                 statement.setQueryTimeout(properties.query().timeoutSeconds());
                 statement.setMaxRows(validation.maxRows());
                 statement.setFetchSize(Math.min(validation.maxRows(), 200));
-                return statement;
-            }, resultSet -> {
+            try (var resultSet = statement.executeQuery()) {
                 List<Map<String, Object>> resultRows = new ArrayList<>();
                 ResultSetMetaData meta = resultSet.getMetaData();
                 while (resultSet.next()) {
@@ -41,9 +39,8 @@ public class SafeQueryExecutor {
                     }
                     resultRows.add(row);
                 }
-                return resultRows;
-            });
-            return DatabaseRows.normalize(rows);
+                return DatabaseRows.normalize(resultRows);
+            }
         } catch (Exception ex) {
             Throwable root = ex;
             while (root.getCause() != null) root = root.getCause();

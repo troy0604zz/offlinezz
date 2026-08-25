@@ -7,6 +7,9 @@ import QueryResultPanel from '../components/query/QueryResultPanel.vue'
 import { apiErrorMessage } from '../services/http'
 import { queryApi } from '../services/query-api'
 import type { QueryAnswer, QueryExportFormat, QueryFeedback } from '../types/query'
+import { useDomainStore } from '../stores/domain'
+
+const domainStore = useDomainStore()
 
 const question = ref('查询2026年华东区域每月净销售额')
 const loading = ref(false)
@@ -24,7 +27,8 @@ async function askQuestion(): Promise<void> {
   loading.value = true
   error.value = ''
   try {
-    result.value = (await queryApi.ask(question.value.trim())).data
+    if (!domainStore.selectedCode) throw new Error('请先选择可访问的数据域')
+    result.value = (await queryApi.ask(question.value.trim(), domainStore.selectedCode)).data
     resultConfirmed.value = false
   } catch (exception) {
     error.value = apiErrorMessage(exception, '分析失败')
@@ -95,7 +99,7 @@ async function submitCorrection(): Promise<void> {
 
 <template>
   <PageHeader title="数据问答" description="使用自然语言查询企业数据，所有结果均保留 SQL 与数据来源。">
-    <el-tag effect="plain">销售数据域</el-tag>
+    <el-tag effect="plain">{{ domainStore.current?.name || '未选择数据域' }}</el-tag>
   </PageHeader>
   <div class="page-container query-page">
     <QuestionComposer v-model="question" :loading="loading" @submit="askQuestion" />

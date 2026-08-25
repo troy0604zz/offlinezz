@@ -1,4 +1,5 @@
 export type TrainingResource =
+  | 'document'
   | 'schema'
   | 'metric'
   | 'relation'

@@ -37,4 +37,9 @@ public class QwenApiLlmProvider implements LlmProvider {
     public String providerName() {
         return "qwen-api:" + runtime.selection().qwenChatModel();
     }
+
+    @Override
+    public String completeJson(String system,String user) {
+        return client.chat(runtime.selection().qwenChatModel(),system,user);
+    }
 }

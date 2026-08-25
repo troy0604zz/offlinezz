@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ChatLineRound, DataAnalysis, Setting, SwitchButton, UserFilled } from '@element-plus/icons-vue'
 import { platformApi } from '../services/platform-api'
 import { useAuthStore } from '../stores/auth'
+import { useDomainStore } from '../stores/domain'
 import { Permission, type PermissionCode } from '../types/auth'
 import type { PlatformInfo } from '../types/platform'
 
@@ -17,6 +18,7 @@ interface NavigationItem {
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const domainStore = useDomainStore()
 const platform = ref<PlatformInfo | null>(null)
 
 const navigation: NavigationItem[] = [
@@ -41,6 +43,7 @@ async function loadPlatform(): Promise<void> {
 
 onMounted(() => {
   loadPlatform()
+  domainStore.load()
   window.addEventListener('model-runtime-changed', loadPlatform)
 })
 onUnmounted(() => window.removeEventListener('model-runtime-changed', loadPlatform))
@@ -70,7 +73,9 @@ onUnmounted(() => window.removeEventListener('model-runtime-changed', loadPlatfo
 
     <section class="app-content">
       <div class="topbar">
-        <span class="topbar__domain">销售数据域</span>
+        <el-select v-model="domainStore.selectedCode" class="domain-switcher" placeholder="请选择数据域" :loading="domainStore.loading" @change="domainStore.select">
+          <el-option v-for="domain in domainStore.domains" :key="domain.code" :label="domain.name" :value="domain.code" />
+        </el-select>
         <el-dropdown trigger="click">
           <button class="user-menu">
             <span class="user-menu__avatar"><el-icon><UserFilled /></el-icon></span>

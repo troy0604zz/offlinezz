@@ -25,6 +25,34 @@ public class InMemoryVectorStore implements VectorStorePort {
     }
 
     @Override
+    public void clear(String knowledgeDomain) { data.remove(knowledgeDomain); }
+
+    @Override
+    public List<String> purgeManaged(String knowledgeDomain, VectorAssetType assetType) {
+        List<String> domains = knowledgeDomain == null ? new ArrayList<>(data.keySet()) : List.of(knowledgeDomain);
+        List<String> affected = new ArrayList<>();
+        for (String domain : domains) {
+            List<KnowledgeChunk> chunks = data.get(domain);
+            if (chunks == null) continue;
+            affected.add(domain);
+            if (assetType == null) {
+                data.remove(domain);
+            } else {
+                synchronized (chunks) {
+                    chunks.removeIf(chunk -> assetType.name().equals(String.valueOf(chunk.metadata().get("assetType"))));
+                    if (chunks.isEmpty()) data.remove(domain, chunks);
+                }
+            }
+        }
+        return affected;
+    }
+
+    @Override
+    public void invalidateOtherEmbeddings(String knowledgeDomain) {
+        // The deterministic test store has only one embedding space per domain.
+    }
+
+    @Override
     public List<KnowledgeChunk> search(String knowledgeDomain, String query, int topK, Map<String, Object> filters) {
         List<String> tokens = tokenize(query);
         return data.getOrDefault(knowledgeDomain, List.of()).stream()

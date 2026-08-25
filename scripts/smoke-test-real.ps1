@@ -43,7 +43,7 @@ if ($IncludeReport) {
     $reportBody = @{ title='East China Sales Analysis'; request='Generate an East China quarterly sales analysis report'; knowledgeDomain='sales' } | ConvertTo-Json
     $report = Invoke-RestMethod "$base/api/v1/reports/generate" -Method Post -ContentType 'application/json; charset=utf-8' `
         -Headers $headers -Body ([Text.Encoding]::UTF8.GetBytes($reportBody)) -TimeoutSec 1200
-    if ($report.sections.Count -ne 2) { throw 'Report sections mismatch' }
+    if ($report.sections.Count -lt 1 -or $report.sections.Count -gt 4) { throw 'Dynamic report sections mismatch' }
 }
 
 Write-Host "PASS real-mode health=$($health.status), llm=$($info.chatModel), embedding=$($info.embeddingModel), qdrantPoints=$($collection.result.points_count), oracleRows=$($answer.rows.Count), elapsedMs=$($answer.elapsedMs)"

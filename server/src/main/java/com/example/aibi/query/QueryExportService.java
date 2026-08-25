@@ -3,6 +3,7 @@ package com.example.aibi.query;
 import com.example.aibi.auth.CurrentUserProvider;
 import com.example.aibi.common.BusinessException;
 import com.example.aibi.common.DatabaseRows;
+import com.example.aibi.domain.DomainAccessService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,22 +35,25 @@ public class QueryExportService {
     private final JdbcClient jdbc;
     private final ObjectMapper mapper;
     private final CurrentUserProvider currentUser;
+    private final DomainAccessService access;
 
-    public QueryExportService(JdbcClient jdbc, ObjectMapper mapper, CurrentUserProvider currentUser) {
+    public QueryExportService(JdbcClient jdbc, ObjectMapper mapper, CurrentUserProvider currentUser,DomainAccessService access) {
         this.jdbc = jdbc;
         this.mapper = mapper;
         this.currentUser = currentUser;
+        this.access=access;
     }
 
     public ExportFile export(String queryRunId, String requestedFormat) {
         ExportFormat format = ExportFormat.from(requestedFormat);
         List<Map<String, Object>> matches = jdbc.sql(
-                        "SELECT id,question,status,result_json FROM query_run WHERE id=?")
+                        "SELECT id,domain,question,status,result_json FROM query_run WHERE id=?")
                 .param(queryRunId).query().listOfRows();
         if (matches.isEmpty()) {
             throw new BusinessException("QUERY_RUN_NOT_FOUND", "查询记录不存在", HttpStatus.NOT_FOUND);
         }
         Map<String, Object> run = DatabaseRows.normalize(matches.get(0));
+        access.requireQuery(String.valueOf(run.get("domain")));
         if (!"COMPLETED".equals(String.valueOf(run.get("status")))) {
             throw new BusinessException("QUERY_NOT_COMPLETED", "只有成功完成的查询可以下载",
                     HttpStatus.BAD_REQUEST);

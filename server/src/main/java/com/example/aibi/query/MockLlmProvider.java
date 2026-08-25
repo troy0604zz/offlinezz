@@ -8,18 +8,20 @@ import java.util.List;
 import java.util.Map;
 import com.example.aibi.training.SqlExampleMatch;
 import com.example.aibi.training.TrainingService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 @ConditionalOnProperty(name = "app.ai.mode", havingValue = "mock", matchIfMissing = true)
 public class MockLlmProvider implements LlmProvider {
     private final TrainingService training;
+    private final ObjectMapper mapper;
 
-    public MockLlmProvider(TrainingService training) { this.training=training; }
+    public MockLlmProvider(TrainingService training,ObjectMapper mapper) { this.training=training; this.mapper=mapper; }
 
     @Override
     public GeneratedQuery generateSql(String knowledgeDomain, String question, List<KnowledgeChunk> context,
                                       List<Map<String, Object>> metrics, List<Map<String, Object>> relations) {
-        List<SqlExampleMatch> examples=training.relevantExamples(knowledgeDomain,question,1);
+        List<SqlExampleMatch> examples=training.relevantExamples(knowledgeDomain,question,context,1);
         if(!examples.isEmpty() && examples.get(0).score()>=0.72) {
             SqlExampleMatch match=examples.get(0);
             return new GeneratedQuery(match.sql(),"命中管理员发布的标准 SQL 案例："+match.question(),List.of("案例相似度="+String.format("%.2f",match.score())),0.99);
@@ -44,6 +46,27 @@ public class MockLlmProvider implements LlmProvider {
 
     @Override
     public String providerName() { return "deterministic-mock"; }
+
+    @Override
+    public String completeJson(String system,String user) {
+        try {
+            String request=between(user,"REPORT_REQUEST_BEGIN","REPORT_REQUEST_END");
+            if(system.contains("REPORT_PLAN")) {
+                return mapper.writeValueAsString(Map.of("sections",List.of(
+                        Map.of("title","核心业务结果","question",request),
+                        Map.of("title","关键对象排名","question",request+"，并按主要业务对象排名 Top10"))));
+            }
+            return mapper.writeValueAsString(Map.of(
+                    "executiveSummary","本报告根据“"+request+"”实时执行域内受控查询生成，结论均可追溯到章节 SQL 和结果快照。",
+                    "recommendations",List.of("优先复核章节中变化幅度最大的业务对象","发布前由数据域负责人确认指标口径和时间范围")));
+        } catch(Exception ex) { throw new IllegalStateException("Mock 报告 JSON 生成失败",ex); }
+    }
+
+    private String between(String value,String begin,String end) {
+        int start=value.indexOf(begin),finish=value.indexOf(end);
+        if(start<0||finish<=start) return "用户指定的分析主题";
+        return value.substring(start+begin.length(),finish).trim();
+    }
 
     private String monthlyEast2026() {
         return """

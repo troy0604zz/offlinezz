@@ -19,15 +19,14 @@ public class TrainingEvaluationService {
         this.training=training; this.orchestrator=orchestrator; this.mapper=mapper;
     }
 
-    public Map<String,Object> run(long id) {
-        Map<String,Object> golden=training.golden(id);
+    public Map<String,Object> run(long id,String domain) {
+        Map<String,Object> golden=training.golden(id,domain);
         String question=String.valueOf(golden.get("question"));
-        String domain=String.valueOf(golden.get("domain"));
-        QueryAnswer answer=orchestrator.ask(new AskRequest(question,domain));
+        QueryAnswer answer=orchestrator.askForTraining(new AskRequest(question,domain));
         double score=score(golden,answer);
         String status=score>=0.999?"PASSED":"FAILED";
         String detail="SQL="+answer.sql()+"；返回 "+answer.rows().size()+" 行";
-        training.saveEvaluation(id,status,score,detail);
+        training.saveEvaluation(id,domain,status,score,detail);
         return Map.of("id",id,"status",status,"score",score,"answer",answer);
     }
 

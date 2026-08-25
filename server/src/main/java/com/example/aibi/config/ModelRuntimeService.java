@@ -40,8 +40,10 @@ public class ModelRuntimeService {
         selection = new RuntimeSelection(chatProvider, embeddingProvider, chatModel, embeddingModel);
         boolean embeddingChanged = !before.embeddingProvider().equals(embeddingProvider)
                 || (QWEN_API.equals(embeddingProvider) && !before.qwenEmbeddingModel().equals(embeddingModel));
-        return new UpdateResult(snapshot(), embeddingChanged);
+        return new UpdateResult(snapshot(), embeddingChanged,before);
     }
+
+    public synchronized void restore(RuntimeSelection previous) { selection=previous; }
 
     public RuntimeSnapshot snapshot() {
         RuntimeSelection current = selection;
@@ -126,5 +128,5 @@ public class ModelRuntimeService {
                                 String qwenChatModel, String qwenEmbeddingModel,
                                 boolean reindexKnowledge) {}
 
-    public record UpdateResult(RuntimeSnapshot runtime, boolean embeddingChanged) {}
+    public record UpdateResult(RuntimeSnapshot runtime, boolean embeddingChanged,RuntimeSelection previous) {}
 }

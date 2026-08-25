@@ -6,11 +6,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CurrentUserProvider {
-    public String username() {
+    public AuthenticatedUser user() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof AuthenticatedUser user) {
-            return user.profile().username();
+            return user;
         }
-        return "system";
+        return null;
+    }
+
+    public String username() {
+        AuthenticatedUser user = user();
+        return user == null ? "system" : user.profile().username();
+    }
+
+    public long userId() {
+        AuthenticatedUser user = user();
+        return user == null ? 0 : user.profile().id();
     }
 }

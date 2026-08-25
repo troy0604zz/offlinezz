@@ -35,6 +35,7 @@ management:
 app:
   security:
     session-hours: ${AUTH_SESSION_HOURS:12}
+    datasource-key: ${DATASOURCE_ENCRYPTION_KEY:}
   ai:
     mode: ${AI_MODE:mock}
     chat-provider: ${AI_CHAT_PROVIDER:ollama}
