@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -112,8 +113,11 @@ public class ReportService {
 
     public List<Map<String,Object>> list(String rawDomain){
         String domain=access.requireReport(rawDomain);
-        return DatabaseRows.normalize(jdbc.sql("SELECT id,domain,title,request_text,status,error_message,created_by,created_at FROM report_job WHERE domain=? ORDER BY created_at DESC")
+        boolean administrator=isAiAdmin();
+        List<Map<String,Object>> reports=DatabaseRows.normalize(jdbc.sql("SELECT id,domain,title,request_text,status,error_message,created_by,created_at FROM report_job WHERE domain=? ORDER BY created_at DESC")
                 .param(domain).query().listOfRows());
+        reports.forEach(report -> report.put("can_delete", administrator || currentUser.username().equals(String.valueOf(report.get("created_by")))));
+        return reports;
     }
 
     public Map<String,Object> detail(String id){
@@ -126,6 +130,39 @@ public class ReportService {
         if(content==null||String.valueOf(content).isBlank()) return row;
         try{return mapper.readValue(String.valueOf(content),new TypeReference<>(){});}
         catch(Exception ex){throw new IllegalStateException("报告历史内容解析失败",ex);}
+    }
+
+    @Transactional
+    public Map<String,Object> delete(String id){
+        List<Map<String,Object>> matches=jdbc.sql("SELECT id,domain,title,status,created_by FROM report_job WHERE id=?")
+                .param(id).query().listOfRows();
+        if(matches.isEmpty()) throw new BusinessException("REPORT_NOT_FOUND","报告不存在",HttpStatus.NOT_FOUND);
+        Map<String,Object> report=DatabaseRows.normalize(matches.get(0));
+        String domain=access.requireReport(String.valueOf(report.get("domain")));
+        if("GENERATING".equals(String.valueOf(report.get("status")))){
+            throw new BusinessException("REPORT_IS_GENERATING","报告正在生成，暂时不能删除",HttpStatus.CONFLICT);
+        }
+        boolean owner=currentUser.username().equals(String.valueOf(report.get("created_by")));
+        if(!owner&&!isAiAdmin()){
+            throw new BusinessException("REPORT_DELETE_FORBIDDEN","只能删除自己创建的报告",HttpStatus.FORBIDDEN);
+        }
+        try{
+            jdbc.sql("INSERT INTO audit_event(trace_id,event_type,actor,resource_type,resource_id,detail) VALUES(?,'REPORT_DELETED',?,'REPORT',?,?)")
+                    .params(id,currentUser.username(),id,mapper.writeValueAsString(Map.of(
+                            "domain",domain,"title",String.valueOf(report.get("title")),"status",String.valueOf(report.get("status")))))
+                    .update();
+        }catch(Exception ex){
+            throw new IllegalStateException("报告删除审计记录保存失败",ex);
+        }
+        jdbc.sql("DELETE FROM report_job WHERE id=?").param(id).update();
+        return Map.of("deleted",true,"id",id);
+    }
+
+    private boolean isAiAdmin(){
+        if("system".equals(currentUser.username())) return true;
+        Integer count=jdbc.sql("SELECT COUNT(*) FROM app_user_role ur JOIN app_role r ON r.id=ur.role_id WHERE ur.user_id=? AND r.code='AI_ADMIN'")
+                .param(currentUser.userId()).query(Integer.class).single();
+        return count!=null&&count>0;
     }
 
     private ReportAiPlanner.SectionPlan canonicalize(String domain,ReportAiPlanner.SectionPlan planned){

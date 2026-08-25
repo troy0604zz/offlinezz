@@ -131,6 +131,7 @@ BOOT-INF/lib/commons-compress-1.28.0.jar
 BOOT-INF/lib/curvesapi-1.08.jar
 BOOT-INF/lib/log4j-api-2.24.3.jar
 BOOT-INF/lib/commons-collections4-4.5.0.jar
+BOOT-INF/lib/openpdf-2.0.5.jar
 BOOT-INF/lib/springdoc-openapi-starter-webmvc-ui-2.8.15.jar
 BOOT-INF/lib/springdoc-openapi-starter-webmvc-api-2.8.15.jar
 BOOT-INF/lib/springdoc-openapi-starter-common-2.8.15.jar

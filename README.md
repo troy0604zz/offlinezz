@@ -42,6 +42,8 @@ npm run dev
 
 数据问答结果确认正确后，可按 Excel、CSV 或 XML 下载本次结果快照；详细流程和接口见 `docs/查询结果下载说明.md`。
 
+智能报告支持查看完整历史内容、下载 PDF/Word，以及按创建人权限删除历史报告；详细规则和接口见 `docs/智能报告历史管理与下载说明.md`。
+
 ## 真实内网模式
 
 准备 Oracle 19c 访问账号、Qdrant，以及 Ollama 本地模型或内网 OpenAI-compatible Chat/Embedding 网关后，以 `--spring.profiles.active=real` 启动后端。内网网关方案使用 `deploy/aibi.internal-model.env.example`，Ollama 方案使用 `deploy/aibi.env.example`。平台 Schema 账号需要建表和迁移权限；业务查询建议使用独立只读账号或只读视图。

@@ -22,9 +22,14 @@ export interface GeneratedReport {
 
 export interface ReportListItem {
   id: string
+  domain: string
   title: string
   request_text: string
   status: string
   error_message?: string
+  created_by: string
   created_at: string
+  can_delete: boolean
 }
+
+export type ReportExportFormat = 'pdf' | 'docx'

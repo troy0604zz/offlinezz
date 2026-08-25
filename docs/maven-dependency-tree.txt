@@ -141,6 +141,7 @@ com.example:ai-bi-server:jar:0.1.0-SNAPSHOT
 |  +- com.github.virtuald:curvesapi:jar:1.08:compile
 |  +- org.apache.logging.log4j:log4j-api:jar:2.24.3:compile
 |  \- org.apache.commons:commons-collections4:jar:4.5.0:compile
++- com.github.librepdf:openpdf:jar:2.0.5:compile
 +- org.springdoc:springdoc-openapi-starter-webmvc-ui:jar:2.8.15:compile
 |  +- org.springdoc:springdoc-openapi-starter-webmvc-api:jar:2.8.15:compile
 |  |  \- org.springdoc:springdoc-openapi-starter-common:jar:2.8.15:compile

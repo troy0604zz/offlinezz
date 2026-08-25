@@ -335,6 +335,14 @@ e35d5992ae4317c74d03395f0e7bc9b6d0cc5a68c14de9b58b4e8f40922d54fb  maven-reposito
 98de813a08221eca073ef69b61af0f9ce349bd8e0a8d54143b3f07c15e94dc7b  maven-repository/com/github/junrar/junrar/7.6.0/junrar-7.6.0.jar.sha1
 1369489ef3479ebdd92b74ab482967ce5014f106157dfe26be01f6332f75222d  maven-repository/com/github/junrar/junrar/7.6.0/junrar-7.6.0.pom
 6efb13fcd80b0c128284de0e14d7913537deb232f0b53308a87f9b28caa78f98  maven-repository/com/github/junrar/junrar/7.6.0/junrar-7.6.0.pom.sha1
+263c06a41f504dbebaf4afd6be58209076c803f6e3e529518d0c2585814c250c  maven-repository/com/github/librepdf/openpdf/2.0.5/_remote.repositories
+831df8a643775410a1bd3566a9db7b2d3205c2aecbf1d077711ba7c315c07837  maven-repository/com/github/librepdf/openpdf/2.0.5/openpdf-2.0.5.jar
+bbb9b885af6585a8f0d3bb8bbf9c9aa8f9a62b7f0f74d13437a0d254bc27cb0d  maven-repository/com/github/librepdf/openpdf/2.0.5/openpdf-2.0.5.jar.sha1
+6463df569378da510366bd040b84ad92914da20354f383ce16d8fd1012823d3c  maven-repository/com/github/librepdf/openpdf/2.0.5/openpdf-2.0.5.pom
+1696cf51639e5d9da745f2936fc4fbd235b99736bd28b5dca59bd0e8a89ca38b  maven-repository/com/github/librepdf/openpdf/2.0.5/openpdf-2.0.5.pom.sha1
+103e3da40ece7d356af7f1e86df75eda1147532aa0f764edbbc7a67d24b6a800  maven-repository/com/github/librepdf/openpdf-parent/2.0.5/_remote.repositories
+20ae37a93e2a81178798c31f64319dec0b39ae0b4af397e446abb11826daf389  maven-repository/com/github/librepdf/openpdf-parent/2.0.5/openpdf-parent-2.0.5.pom
+5eb97768ececa39966f9c87807107c26fa524e3ba5ee403d5fccd49a94c3f643  maven-repository/com/github/librepdf/openpdf-parent/2.0.5/openpdf-parent-2.0.5.pom.sha1
 b12f3e1747430a4b1ca04d6b13cbbcb37bc6ea452e129958462783c86dbde7f8  maven-repository/com/github/luben/zstd-jni/1.5.5-11/_remote.repositories
 d75b2ced6059f81ad23e021c554259b906b6c4f2991cb772409827569ead4c1a  maven-repository/com/github/luben/zstd-jni/1.5.5-11/zstd-jni-1.5.5-11.jar
 53235f1a8462c0a609a73ef66bed77715948c324ea53a39a834dcb6e80d414df  maven-repository/com/github/luben/zstd-jni/1.5.5-11/zstd-jni-1.5.5-11.jar.sha1
